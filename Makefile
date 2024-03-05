@@ -1,7 +1,8 @@
 LOCAL_BIN := $(CURDIR)/bin
 GOBIN := $(LOCAL_BIN)
+
 install-golangci-lint:
-	GOBIN=$(LOCAL_BIN) go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.53.3
+	GOBIN=$(LOCAL_BIN) go install github.com/golangci/golangci-lint/cmd/golangci-lint
 
 lint:
 	GOBIN=$(LOCAL_BIN) golangci-lint run ./... -- config .golangci.reference.yml
