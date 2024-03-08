@@ -9,8 +9,9 @@ import "google/protobuf/wrappers.proto";
 option go_package = "github.com/t1pcrips/pkg/user_v1;user_v1";
 
 enum Role {
-    ADMIN = 0;
-    USER = 1;
+    UNKNOWN = 0;
+    ADMIN = 1;
+    USER = 2;
 }
 
 service UserV1 {
