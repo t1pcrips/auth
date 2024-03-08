@@ -1,6 +1,6 @@
 module github.com/t1pcrips/auth
 
-go 1.21
+go 1.22
 
 require (
 	github.com/brianvoe/gofakeit v3.18.0+incompatible
