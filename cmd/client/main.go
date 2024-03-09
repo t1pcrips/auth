@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -19,7 +20,7 @@ const (
 func main() {
 	conn, err := grpc.Dial(addres, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		log.Fatalf("failed to connect to server: %v", addres)
+		log.Fatalf(fmt.Sprintf(color.RedString("failed to connect to server - %v", addres)))
 	}
 
 	c := desc.NewUserV1Client(conn)
@@ -33,10 +34,10 @@ func main() {
 	r, err := c.Get(ctx, &desc.GetRequest{Id: ID})
 
 	if err != nil {
-		log.Fatalf("failed to create Request to server: %v", err)
+		log.Fatalf(fmt.Sprintf(color.RedString("failed to create Request to server: %v", err)))
 	} else {
-		log.Print(color.HiMagentaString("Request Created!"))
+		log.Print(fmt.Sprintf(color.HiMagentaString("Request Created!")))
 	}
 
-	log.Printf(color.RedString("Note Info:\n") + color.GreenString("%+v", r.GetUser()))
+	log.Printf(fmt.Sprintf(color.RedString("Note Info:\n") + color.GreenString("%+v", r.GetUser())))
 }

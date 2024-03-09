@@ -7,6 +7,7 @@ import (
 	"net"
 
 	"github.com/brianvoe/gofakeit"
+	"github.com/fatih/color"
 	desc "github.com/t1pcrips/auth/pkg/user_v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -24,7 +25,7 @@ type server struct {
 
 // Create . . .
 func (s *server) Create(ctx context.Context, req *desc.CreateRequest) (*desc.CreateResponse, error) {
-	log.Printf("Create a new user - USER ID: %v\n", req.GetInfo())
+	log.Printf(fmt.Sprintf(color.HiCyanString("Create a new user - USER ID: %v", req.GetInfo())))
 	return &desc.CreateResponse{
 		Id: gofakeit.Int64(),
 	}, nil
@@ -32,7 +33,7 @@ func (s *server) Create(ctx context.Context, req *desc.CreateRequest) (*desc.Cre
 
 // Get . . .
 func (s *server) Get(ctx context.Context, req *desc.GetRequest) (*desc.GetResponse, error) {
-	log.Printf("Get USER ID: %v\n", req.Id)
+	log.Printf(fmt.Sprintf(color.HiCyanString("Get USER ID: %v", req.Id)))
 	return &desc.GetResponse{
 		User: &desc.User{
 			Id: gofakeit.Int64(),
@@ -51,29 +52,29 @@ func (s *server) Get(ctx context.Context, req *desc.GetRequest) (*desc.GetRespon
 
 // Delete . . .
 func (s *server) Delete(ctx context.Context, req *desc.DeleteRequest) (*emptypb.Empty, error) {
-	log.Printf("Deleate ID: %v\n", req.Id)
+	log.Printf(fmt.Sprintf(color.HiCyanString("Deleate ID: %v", req.Id)))
 	return new(emptypb.Empty), nil
 }
 
 // Update . . .
 func (s *server) Update(ctx context.Context, req *desc.UpdateRequest) (*emptypb.Empty, error) {
-	log.Printf("Update ID: %v\n", req.Id)
+	log.Printf(fmt.Sprintf(color.HiCyanString("Update ID: %v", req.Id)))
 	return new(emptypb.Empty), nil
 }
 
 func main() {
 	listen, err := net.Listen("tcp", fmt.Sprintf(":%d", grpcPort))
 	if err != nil {
-		log.Fatalf("faield to listen - %v\n", err)
+		log.Fatalf(fmt.Sprintf(color.RedString("faield to listen - %v", err)))
 	}
 
 	s := grpc.NewServer()
 	reflection.RegisterV1(s)
 	desc.RegisterUserV1Server(s, &server{})
 
-	log.Printf("server listeninng at %v\n", listen.Addr())
+	log.Printf(fmt.Sprintf(color.HiMagentaString("server listeninng at %v", listen.Addr())))
 
 	if err = s.Serve(listen); err != nil {
-		log.Fatalf("failed to serve - %v\n", err)
+		log.Printf(fmt.Sprintf(color.RedString("failed to serve - %v", err)))
 	}
 }
