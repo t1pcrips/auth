@@ -1,0 +1,29 @@
+run:
+  concurrency: 4           # Количество параллельных процессов
+  timeout: 5m              # Максимальное время выполнения
+  issues-exit-code: 1      # Код возврата при обнаружении проблем
+  tests: true              # Запуск тестов перед линтингом (true/false)
+  skip-dirs:
+    - bin
+    - vendor
+    - var
+    - tmp
+    - .cache
+    - .idea                # Каталоги для пропуска
+  skip-files:
+    - \.pb\.go$            # Регулярные выражения для пропуска файлов
+    - \.pb\.gw\.go$
+
+output:
+  format: colored-line-number  # Формат вывода результата
+  print-issued-lines: true     # Вывод строк с проблемами
+  print-linter-name: true      # Вывод имени линтера
+
+linters-settings:
+  govet:
+    check-shadowing: true     # Проверка на переопределение переменных
+  dupl:
+    threshold: 100            # Порог дублирования
+  goconst:
+    min-len: 2                # Минимальная длина констант
+    min-occurrences: 2        # Минимальное количество вхождений

@@ -1,0 +1,47 @@
+name: Go
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest        # workflow будет выполняться на виртуальной машине с ОС "Ubuntu", последней версии
+    steps:
+      - name: Check Go Version
+        run: go version
+
+      - name: Checkout Repository # Клонирование репозитория в виртуальную среду для осуществление всех тестов
+        uses: actions/checkout@v2
+      
+      - name: SetUp Go            # Подготовка и настройка "Go"
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.23.2'      # Указание необходимой для сборки версии "Go"
+
+      - name: Build
+        run: go build -o ./bin/ -v ./...
+
+      - name: Test
+        run: go test -v ./...
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest        # workflow будет выполняться на виртуальной машине с ОС "Ubuntu", последней версии
+    steps:
+      - name: Checkout Repository # Клонирование репозитория в виртуальную среду для осуществление всех тестов
+        uses: actions/checkout@v2 
+      
+      - name: SetUp Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.23.2'      # Указание необходимой для сборки версии "Go"
+
+      - name: Install golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: v1.61.0        # Укажите нужную версию golangci-lint здесь
+      - name: Lint
+        run: golangci-lint run ./...
