@@ -19,7 +19,7 @@ jobs:
       - name: SetUp Go            # Подготовка и настройка "Go"
         uses: actions/setup-go@v2
         with:
-          go-version: '1.23.2'      # Указание необходимой для сборки версии "Go"
+          go-version: '1.23.3'      # Указание необходимой для сборки версии "Go"
 
       - name: Build
         run: go build -o ./bin/ -v ./...
@@ -37,7 +37,7 @@ jobs:
       - name: SetUp Go
         uses: actions/setup-go@v2
         with:
-          go-version: '1.23.2'      # Указание необходимой для сборки версии "Go"
+          go-version: '1.23.3'      # Указание необходимой для сборки версии "Go"
 
       - name: Install golangci-lint
         uses: golangci/golangci-lint-action@v3
