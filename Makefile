@@ -27,3 +27,13 @@ generation-protoc:
 generate:
 	make generation-protoc;
 
+build:
+	GOOS=linux GOARCH=amd64 go build -o ./bin/service-linux cmd/server/main.go
+
+copy-to-server:
+	scp ./bin/service-linux root@5.159.100.165:
+
+docker-build-and-push:
+	docker buildx build --no-cache --platform linux/amd64 -t cr.selcloud.ru/server/test-server:v0.0.1 .
+	docker login -u token -p CRgAAAAAMQ3VM9YXtVQHnwYf8Lx9aDq-6VyC9Ry4 cr.selcloud.ru/server
+	docker push cr.selcloud.ru/server/test-server:v0.0.1
