@@ -17,7 +17,7 @@ type server struct {
 }
 
 func (s *server) Create(ctx context.Context, req *deps.CreateRequest) (*deps.CreateResponse, error) {
-	log.Printf("create: %+b\n", req)
+	log.Printf("create: %v\n", req)
 	return &deps.CreateResponse{
 		Id: rand.Int63(),
 	}, nil
