@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 env:
-  REGISTRY: "cr.selcloud.ru/server"
+  REGISTRY: "cr.selcloud.ru/t1pcrips"
   IMAGE_NAME: "crud-server"
   CONTAINER_NAME: "crud-server-container"
 
@@ -76,7 +76,7 @@ jobs:
         run: go test -v ./...
 
   lint:
-    name: Lint
+    name: lint
     runs-on: ubuntu-latest        # workflow будет выполняться на виртуальной машине с ОС "Ubuntu", последней версии
     steps:
       - name: Checkout Repository # Клонирование репозитория в виртуальную среду для осуществление всех тестов
