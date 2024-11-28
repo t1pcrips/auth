@@ -69,7 +69,6 @@ func (repo *UserRepo) Get(ctx context.Context, userId int64) (*repository.UserGe
 	}
 
 	rows, err := repo.pool.Query(ctx, query, args...)
-	defer rows.Close()
 
 	resp, err := pgx.CollectOneRow(rows, pgx.RowToStructByName[repository.UserGetResponse])
 	if err != nil {
@@ -78,6 +77,8 @@ func (repo *UserRepo) Get(ctx context.Context, userId int64) (*repository.UserGe
 		}
 		return nil, fmt.Errorf("failed to collet in one row with struct by name: %w", err)
 	}
+	defer rows.Close()
+
 	return &resp, nil
 }
 
