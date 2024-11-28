@@ -1,52 +1,70 @@
 package main
 
 import (
-	deps "auth/pkg/auth_v1"
+	"auth/internal/config"
+	"auth/internal/config/env"
+	"auth/internal/database"
+	"auth/internal/repository/user"
+	"auth/internal/service"
+	deps "auth/pkg/user_v1"
 	"context"
+	"flag"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
-	"google.golang.org/protobuf/types/known/emptypb"
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"log"
-	"math/rand"
 	"net"
 )
 
-type server struct {
-	deps.UnimplementedAuthServer
-}
+var configPath string
 
-func (s *server) Create(ctx context.Context, req *deps.CreateRequest) (*deps.CreateResponse, error) {
-	log.Printf("create: %v\n", req)
-	return &deps.CreateResponse{
-		Id: rand.Int63(),
-	}, nil
-}
-
-func (s *server) Get(ctx context.Context, req *deps.GetRequest) (*deps.GetResponse, error) {
-	log.Printf("Get: %+v\n", req)
-	return &deps.GetResponse{Id: rand.Int63(), UpdatedAt: timestamppb.Now()}, nil
-}
-
-func (s *server) Update(ctx context.Context, req *deps.UpdateRequest) (*emptypb.Empty, error) {
-	log.Printf("update: %+v\n", req)
-	return &emptypb.Empty{}, nil
-}
-
-func (s *server) Delete(ctx context.Context, req *deps.DeleteRequest) (*emptypb.Empty, error) {
-	log.Printf("delete: %+v", req)
-	return &emptypb.Empty{}, nil
+func init() {
+	flag.StringVar(&configPath, "config", ".env", "path to config file")
+	flag.Parse()
 }
 
 func main() {
-	lis, err := net.Listen("tcp", ":50051")
+	ctx := context.Background()
+
+	err := config.Load(configPath)
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Println(err)
 	}
 
-	s := grpc.NewServer()
-	reflection.Register(s)
-	deps.RegisterAuthServer(s, &server{})
+	pgConfig, err := env.NewPgConfigSearcher().Get()
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	log.Fatal(s.Serve(lis))
+	grpcConfig, err := env.NewGRPCConfigSearcher().Get()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	logConfig, err := env.NewLogConfigSearcher().Get()
+	if err != nil {
+		log.Println(err)
+	}
+
+	logger := logConfig.SetUp()
+
+	pool, closer, err := database.InitPostgresConnection(ctx, pgConfig)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer closer()
+
+	repository := user.NewUserRepo(pool, logger)
+	userServer := service.NewUserServer(repository, logger)
+
+	lis, err := net.Listen("tcp", grpcConfig.Address())
+	if err != nil {
+		log.Fatal(err)
+	}
+	server := grpc.NewServer()
+	reflection.Register(server)
+	deps.RegisterUserServer(server, userServer)
+
+	log.Println("server starts...")
+	log.Fatal(server.Serve(lis))
 }

@@ -1,14 +1,14 @@
 syntax = "proto3";
 
-package v1;
+package user_v1;
 
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
 
-option go_package = "github.com/t1pcrips/auth/pkg/auth_v1;auth_v1";
+option go_package = "github.com/t1pcrips/user/pkg/user_v1;user_v1";
 
-service Auth {
+service User {
   rpc Create(CreateRequest) returns (CreateResponse);
   rpc Get(GetRequest) returns (GetResponse);
   rpc Update(UpdateRequest) returns (google.protobuf.Empty);
