@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"github.com/t1pcrips/auth/internal/config"
+	"github.com/t1pcrips/auth/internal/interceptor"
 	dst "github.com/t1pcrips/auth/pkg/user_v1"
 	"github.com/t1pcrips/platform-pkg/pkg/closer"
 	"google.golang.org/grpc"
@@ -64,7 +65,11 @@ func (a *App) initConfig(ctx context.Context) error {
 }
 
 func (a *App) initGRPCServer(ctx context.Context) error {
-	a.grpcServer = grpc.NewServer(grpc.Creds(insecure.NewCredentials()))
+	a.grpcServer = grpc.NewServer(
+		grpc.Creds(insecure.NewCredentials()),
+		grpc.UnaryInterceptor(interceptor.ValidateInterceptor),
+	)
+
 	reflection.Register(a.grpcServer)
 	dst.RegisterUserServer(a.grpcServer, a.serviceProvider.UserApiImpl(ctx))
 
