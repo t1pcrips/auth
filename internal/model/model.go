@@ -25,7 +25,7 @@ type GetUserResponse struct {
 	Email     string
 	Role      UserRole
 	CreatedAt time.Time
-	UpdatedAt time.Time `db:"updated_at"`
+	UpdatedAt time.Time
 }
 
 type GetUserRequest struct {
