@@ -18,8 +18,8 @@ func ToCreateRequestApiFromDst(info *dst.CreateRequest) *model.CreateUserRequest
 func ToUpdateRequestApiFromDst(info *dst.UpdateRequest) *model.UpdatUsereRequest {
 	return &model.UpdatUsereRequest{
 		ID:    info.GetId(),
-		Name:  info.GetName().GetValue(),
-		Email: info.GetEmail().GetValue(),
+		Name:  info.GetName(),
+		Email: info.GetEmail(),
 		Role:  ToServiceRole(info.GetRole()),
 	}
 }

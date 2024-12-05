@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-	"fmt"
 	"github.com/Masterminds/squirrel"
 	"github.com/t1pcrips/auth/internal/model"
 	"github.com/t1pcrips/auth/internal/repository/user/converter_user"
@@ -12,9 +11,8 @@ import (
 )
 
 func (repo *UserRepositoryImpl) Update(ctx context.Context, info *model.UpdatUsereRequest) error {
-	fmt.Println("IDDDDDD", info.ID)
 	repoInfo := converter_user.ToUpdateUserRequestFromService(info)
-	fmt.Println("IDDDDDD", repoInfo.ID)
+
 	builderUpdateUser := squirrel.Update(tableUsers).
 		PlaceholderFormat(squirrel.Dollar).
 		Set(nameColumn, repoInfo.Name).
@@ -33,9 +31,13 @@ func (repo *UserRepositoryImpl) Update(ctx context.Context, info *model.UpdatUse
 		QueryRow: query,
 	}
 
-	_, err = repo.db.DB().ExecContext(ctx, q, args...)
+	result, err := repo.db.DB().ExecContext(ctx, q, args...)
 	if err != nil {
 		return errs.ErrExec
+	}
+
+	if result.RowsAffected() == 0 {
+		return errs.ErrNoRowsUpdate
 	}
 
 	return nil
