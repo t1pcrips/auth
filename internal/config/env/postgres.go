@@ -1,18 +1,18 @@
 package env
 
 import (
-	"auth/internal/config"
 	"errors"
+	"github.com/t1pcrips/auth/internal/config"
 	"os"
 	"strconv"
 )
 
 const (
-	hostPG   = "PG_HOST"
-	portPG   = "PG_PORT"
-	user     = "POSTGRES_USER"
-	name     = "POSTGRES_DB"
-	password = "POSTGRES_PASSWORD"
+	hostPG     = "PG_HOST"
+	portPG     = "PG_PORT"
+	userPG     = "POSTGRES_USER"
+	namePG     = "POSTGRES_DB"
+	passwordPG = "POSTGRES_PASSWORD"
 )
 
 type PgConfigSearcher struct{}
@@ -37,17 +37,17 @@ func (s *PgConfigSearcher) Get() (*config.PgConfig, error) {
 		return nil, errors.New("incorrect port, use integer port")
 	}
 
-	dbUser := os.Getenv(user)
+	dbUser := os.Getenv(userPG)
 	if len(dbUser) == 0 {
 		return nil, errors.New("pgdb User not found")
 	}
 
-	dbName := os.Getenv(name)
+	dbName := os.Getenv(namePG)
 	if len(dbName) == 0 {
 		return nil, errors.New("pgdb Name not found")
 	}
 
-	dbPass := os.Getenv(password)
+	dbPass := os.Getenv(passwordPG)
 	if len(dbPass) == 0 {
 		return nil, errors.New("db Pass not found")
 	}

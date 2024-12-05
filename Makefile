@@ -14,6 +14,7 @@ install-deps:
 	GOBIN=$(LOCAL_BIN) go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 	GOBIN=$(LOCAL_BIN) go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 	GOBIN=$(LOCAL_BIN) go install github.com/pressly/goose/v3/cmd/goose@latest
+	GOBIN=$(LOCAL_BIN) go install github.com/vektra/mockery/v2@v2.50.0
 
 get-deps-for-protoc:
 	go get -u google.golang.org/protobuf/cmd/protoc-gen-go

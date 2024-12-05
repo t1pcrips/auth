@@ -1,12 +1,17 @@
 package app
 
 import (
-	"auth/internal/client/database"
-	"auth/internal/client/database/postgres"
-	"auth/internal/client/database/transaction"
-	"auth/internal/config"
-	"auth/internal/config/env"
 	"context"
+	"github.com/t1pcrips/auth/internal/api/user"
+	"github.com/t1pcrips/auth/internal/config"
+	"github.com/t1pcrips/auth/internal/config/env"
+	"github.com/t1pcrips/auth/internal/repository"
+	userRepository "github.com/t1pcrips/auth/internal/repository/user"
+	"github.com/t1pcrips/auth/internal/service"
+	userService "github.com/t1pcrips/auth/internal/service/user"
+	"github.com/t1pcrips/platform-pkg/pkg/database"
+	"github.com/t1pcrips/platform-pkg/pkg/database/postgres"
+	"github.com/t1pcrips/platform-pkg/pkg/database/transaction"
 	"log"
 )
 
@@ -16,6 +21,11 @@ type serviceProvider struct {
 
 	dbClient  database.Client
 	txManeger database.TxManeger
+
+	userRepository repository.UserRepository
+
+	userService service.UserService
+	userApiImpl *user.UserApiImpl
 }
 
 func newServiceProvider() *serviceProvider {
@@ -54,7 +64,7 @@ func (s *serviceProvider) GRPCConfig() *config.GRPCConfig {
 
 func (s *serviceProvider) DBClient(ctx context.Context) database.Client {
 	if s.dbClient == nil {
-		dbc, err := postgres.NewClientPG(ctx, s.PgConfig().DSN())
+		dbc, err := postgres.New(ctx, s.PgConfig().DSN())
 		if err != nil {
 			log.Fatalf("failed to create DBClient: %s", err.Error())
 		}
@@ -72,8 +82,32 @@ func (s *serviceProvider) DBClient(ctx context.Context) database.Client {
 
 func (s *serviceProvider) TxManeger(ctx context.Context) database.TxManeger {
 	if s.txManeger == nil {
-		s.txManeger = transaction.NewTransactionManeger(s.DBClient(ctx).DB())
+		s.txManeger = transaction.NewTransactionManager(s.DBClient(ctx).DB())
 	}
 
 	return s.txManeger
+}
+
+func (s *serviceProvider) UserRepository(ctx context.Context) repository.UserRepository {
+	if s.userRepository == nil {
+		s.userRepository = userRepository.NewUserRepositoryImpl(s.DBClient(ctx))
+	}
+
+	return s.userRepository
+}
+
+func (s *serviceProvider) UserService(ctx context.Context) service.UserService {
+	if s.userService == nil {
+		s.userService = userService.NewUserServiceImpl(s.UserRepository(ctx), s.TxManeger(ctx))
+	}
+
+	return s.userService
+}
+
+func (s *serviceProvider) UserApiImpl(ctx context.Context) *user.UserApiImpl {
+	if s.userApiImpl == nil {
+		s.userApiImpl = user.NewUserApiImpl(s.UserService(ctx))
+	}
+
+	return s.userApiImpl
 }

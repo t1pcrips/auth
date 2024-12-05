@@ -1,8 +1,8 @@
 package env
 
 import (
-	"auth/internal/config"
 	"errors"
+	"github.com/t1pcrips/auth/internal/config"
 	"os"
 )
 

@@ -1,9 +1,9 @@
 package env
 
 import (
-	"auth/internal/config"
 	"fmt"
 	"github.com/rs/zerolog"
+	"github.com/t1pcrips/auth/internal/config"
 	"os"
 	"strconv"
 )

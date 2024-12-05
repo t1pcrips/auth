@@ -1,5 +1,7 @@
 volumes:
   pglocal:
+  redislocal:
+
 services:
   migrator-local:
     build:
@@ -23,3 +25,10 @@ services:
       retries: 5
     volumes:
       - pglocal:/var/lib/postgresql/data
+
+  redis:
+    image: redis
+    ports:
+      - "6380:6379"
+    volumes:
+      - redislocal:/data

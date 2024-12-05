@@ -5,7 +5,11 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/rs/zerolog"
 	"net"
-	"os"
+	"time"
+)
+
+const (
+	postgresDSNExample = "postgres://%s:%s@%s:%d/%s"
 )
 
 type GRPCConfig struct {
@@ -14,11 +18,19 @@ type GRPCConfig struct {
 }
 
 type PgConfig struct {
-	Port     int
 	Host     string
+	Port     int
 	User     string
 	Name     string
 	Password string
+}
+
+type RedisConfig struct {
+	Host        string
+	Port        string
+	MaxIdle     int
+	IdleTimeout time.Duration
+	CtxTimeout  time.Duration
 }
 
 type LogConfig struct {
@@ -30,12 +42,14 @@ func (cfg *GRPCConfig) Address() string {
 	return net.JoinHostPort(cfg.Host, cfg.Port)
 }
 
-func (cfg *LogConfig) SetUp() *zerolog.Logger {
-	settingsLoger := zerolog.ConsoleWriter{TimeFormat: cfg.LogTimeFormat, Out: os.Stdout, NoColor: false}
-	logger := zerolog.New(settingsLoger).With().Timestamp().Logger()
-	zerolog.SetGlobalLevel(cfg.LogLevel)
-	zerolog.TimeFieldFormat = cfg.LogTimeFormat
-	return &logger
+func (cfg *RedisConfig) Address() string {
+	return net.JoinHostPort(cfg.Host, cfg.Port)
+}
+
+func (cfg *PgConfig) DSN() string {
+	return fmt.Sprintf(
+		postgresDSNExample,
+		cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.Name)
 }
 
 func Load(path string) error {
