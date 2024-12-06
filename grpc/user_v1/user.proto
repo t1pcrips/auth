@@ -6,8 +6,25 @@ import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 import "google/api/annotations.proto";
 import "validate/validate.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
 
 option go_package = "github.com/t1pcrips/auth/pkg/user_v1;user_v1";
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "User API"
+    version: "1.0.0"
+    contact: {
+      name: "Timofey Podlinov"
+      email: "timapodina@gmail.com"
+    };
+  };
+  host: "localhost:8081"
+  schemes: HTTP
+  schemes: HTTPS
+  consumes: "application/json"
+  produces: "application/json"
+};
 
 service User {
   rpc Create(CreateRequest) returns (CreateResponse) {

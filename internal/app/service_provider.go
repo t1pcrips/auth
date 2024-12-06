@@ -16,10 +16,11 @@ import (
 )
 
 type serviceProvider struct {
-	pgConfig    *config.PgConfig
-	redisConfig *config.RedisConfig
-	grpcConfig  *config.GRPCConfig
-	httpConfig  *config.HTTPConfig
+	pgConfig      *config.PgConfig
+	redisConfig   *config.RedisConfig
+	grpcConfig    *config.GRPCConfig
+	httpConfig    *config.HTTPConfig
+	swaggerConfig *config.SwagerConfig
 
 	dbClient  database.Client
 	txManeger database.TxManeger
@@ -92,6 +93,21 @@ func (s *serviceProvider) RedisConfig() *config.RedisConfig {
 	}
 
 	return s.redisConfig
+}
+
+func (s *serviceProvider) SwaggerConfig() *config.SwagerConfig {
+	if s.swaggerConfig == nil {
+		cfgSearcher := env.NewSwaggerConfigSearcher()
+
+		cfg, err := cfgSearcher.Get()
+		if err != nil {
+			log.Fatalf("failed to get swagger config: %s", err.Error())
+		}
+
+		s.swaggerConfig = cfg
+	}
+
+	return s.swaggerConfig
 }
 
 func (s *serviceProvider) DBClient(ctx context.Context) database.Client {

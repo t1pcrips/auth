@@ -22,6 +22,11 @@ type HTTPConfig struct {
 	Port string
 }
 
+type SwagerConfig struct {
+	Host string
+	Port string
+}
+
 type PgConfig struct {
 	Host     string
 	Port     int
@@ -52,6 +57,10 @@ func (cfg *HTTPConfig) Address() string {
 }
 
 func (cfg *RedisConfig) Address() string {
+	return net.JoinHostPort(cfg.Host, cfg.Port)
+}
+
+func (cfg *SwagerConfig) Address() string {
 	return net.JoinHostPort(cfg.Host, cfg.Port)
 }
 
