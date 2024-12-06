@@ -17,6 +17,11 @@ type GRPCConfig struct {
 	Port string
 }
 
+type HTTPConfig struct {
+	Host string
+	Port string
+}
+
 type PgConfig struct {
 	Host     string
 	Port     int
@@ -39,6 +44,10 @@ type LogConfig struct {
 }
 
 func (cfg *GRPCConfig) Address() string {
+	return net.JoinHostPort(cfg.Host, cfg.Port)
+}
+
+func (cfg *HTTPConfig) Address() string {
 	return net.JoinHostPort(cfg.Host, cfg.Port)
 }
 

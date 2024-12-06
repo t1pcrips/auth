@@ -27,7 +27,7 @@ func (repo *UserRepositoryImpl) Update(ctx context.Context, info *model.UpdatUse
 	}
 
 	q := database.Query{
-		Name:     "user repository - update user",
+		Name:     "user_v1 repository - update user_v1",
 		QueryRow: query,
 	}
 

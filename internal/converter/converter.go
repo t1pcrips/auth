@@ -26,6 +26,7 @@ func ToUpdateRequestApiFromDst(info *dst.UpdateRequest) *model.UpdatUsereRequest
 
 func ToDstGetFromGetApi(info *model.GetUserResponse) *dst.GetResponse {
 	return &dst.GetResponse{
+		Id:        info.Id,
 		Name:      info.Name,
 		Email:     info.Email,
 		Role:      ToRoleFromServiceRole(info.Role),

@@ -15,7 +15,7 @@ func (repo *UserRepositoryImpl) Delete(ctx context.Context, userId int64) error 
 	query, args, err := builderDeleteUser.ToSql()
 
 	q := database.Query{
-		Name:     "user repository - delete user",
+		Name:     "user_v1 repository - delete user_v1",
 		QueryRow: query,
 	}
 

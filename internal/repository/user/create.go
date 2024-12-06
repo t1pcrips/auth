@@ -24,7 +24,7 @@ func (repo *UserRepositoryImpl) Create(ctx context.Context, info *model.CreateUs
 	}
 
 	q := database.Query{
-		Name:     "user repository - create user",
+		Name:     "user_v1 repository - create user_v1",
 		QueryRow: query,
 	}
 

@@ -22,7 +22,7 @@ func (repo *UserRepositoryImpl) Get(ctx context.Context, userId int64) (*model.G
 	}
 
 	q := database.Query{
-		Name:     "user repository - get user",
+		Name:     "user_v1 repository - get user_v1",
 		QueryRow: query,
 	}
 

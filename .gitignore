@@ -4,3 +4,4 @@ bin/
 local.env
 prod.env
 todo.md
+vendor.protogen
