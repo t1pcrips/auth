@@ -12,13 +12,13 @@ const (
 	hostHTTP = "HTTP_HOST"
 )
 
-type HTTPCfgSearcher struct{}
+type HTTPConfigSearcher struct{}
 
-func NewHTTPCfgSearcher() *HTTPCfgSearcher {
-	return &HTTPCfgSearcher{}
+func NewHTTPCfgSearcher() *HTTPConfigSearcher {
+	return &HTTPConfigSearcher{}
 }
 
-func (cfg *HTTPCfgSearcher) Get() (*config.HTTPConfig, error) {
+func (cfg *HTTPConfigSearcher) Get() (*config.HTTPConfig, error) {
 	host := os.Getenv(hostHTTP)
 	if len(host) == 0 {
 		return nil, errors.New("http host not found")

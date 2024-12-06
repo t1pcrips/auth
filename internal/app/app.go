@@ -155,7 +155,7 @@ func (a *App) initSWAGGERServer(ctx context.Context) error {
 
 	mux := http.NewServeMux()
 	mux.Handle("/", http.StripPrefix("/", http.FileServer(statikFs)))
-	mux.HandleFunc("/user.swagger.json", serveSwaggerFile("/grpc.swagger.json"))
+	mux.HandleFunc("/grpc.swagger.json", serveSwaggerFile("/grpc.swagger.json"))
 
 	a.swaggerServer = &http.Server{
 		Addr:    a.serviceProvider.SwaggerConfig().Address(),
