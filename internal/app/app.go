@@ -7,7 +7,9 @@ import (
 	"github.com/rs/cors"
 	"github.com/t1pcrips/auth/internal/config"
 	"github.com/t1pcrips/auth/internal/interceptor"
-	desc "github.com/t1pcrips/auth/pkg/user_v1"
+	"github.com/t1pcrips/auth/pkg/access_v1"
+	"github.com/t1pcrips/auth/pkg/auth_v1"
+	"github.com/t1pcrips/auth/pkg/user_v1"
 	_ "github.com/t1pcrips/auth/statik"
 	"github.com/t1pcrips/platform-pkg/pkg/closer"
 	"google.golang.org/grpc"
@@ -109,13 +111,20 @@ func (a *App) initConfig(ctx context.Context) error {
 }
 
 func (a *App) initGRPCServer(ctx context.Context) error {
+	//creds, err := credentials.NewServerTLSFromFile(a.serviceProvider.GRPCConfig().Creds, a.serviceProvider.GRPCConfig().CredsKey)
+	//if err != nil {
+	//	return err
+	//}
+
 	a.grpcServer = grpc.NewServer(
 		grpc.Creds(insecure.NewCredentials()),
 		grpc.UnaryInterceptor(interceptor.ValidateInterceptor),
 	)
 
 	reflection.Register(a.grpcServer)
-	desc.RegisterUserServer(a.grpcServer, a.serviceProvider.UserApiImpl(ctx))
+	user_v1.RegisterUserServer(a.grpcServer, a.serviceProvider.UserApiImpl(ctx))
+	auth_v1.RegisterAuthServer(a.grpcServer, a.serviceProvider.AuthApiImpl(ctx))
+	access_v1.RegisterAccessServer(a.grpcServer, a.serviceProvider.AccessApiImpl(ctx))
 
 	return nil
 }
@@ -127,7 +136,7 @@ func (a *App) initHTTPServer(ctx context.Context) error {
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	}
 
-	err := desc.RegisterUserHandlerFromEndpoint(ctx, mux, a.serviceProvider.GRPCConfig().Address(), opts)
+	err := user_v1.RegisterUserHandlerFromEndpoint(ctx, mux, a.serviceProvider.GRPCConfig().Address(), opts)
 	if err != nil {
 		return err
 	}

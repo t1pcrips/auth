@@ -24,7 +24,7 @@ get-deps-for-protoc:
 	go get -u google.golang.org/protobuf/cmd/protoc-gen-go
 	go get -u google.golang.org/grpc/cmd/protoc-gen-go-grpc
 
-generation-protoc:
+generation-protoc-user:
 	mkdir -p pkg/swagger
 	mkdir -p pkg/user_v1
 	protoc --proto_path grpc/user_v1  --proto_path vendor.protogen \
@@ -41,6 +41,32 @@ generation-protoc:
             --openapiv2_opt=merge_file_name=grpc \
             --plugin=protoc-gen-openapiv2=bin/protoc-gen-openapiv2 \
             grpc/user_v1/user.proto
+
+generation-protoc-auth:
+	mkdir -p pkg/auth_v1
+	protoc --proto_path grpc/auth_v1  --proto_path vendor.protogen \
+            --go_out=pkg/auth_v1 --go_opt=paths=source_relative \
+            --plugin=protoc-gen-go=bin/protoc-gen-go \
+            --go-grpc_out=pkg/auth_v1 --go-grpc_opt=paths=source_relative \
+            --plugin=protoc-gen-go-grpc=bin/protoc-gen-go-grpc \
+            --validate_out=lang=go:pkg/auth_v1 --validate_opt=paths=source_relative \
+            --plugin=protoc-gen-validate=bin/protoc-gen-validate \
+            --grpc-gateway_out=pkg/auth_v1 --grpc-gateway_opt=paths=source_relative \
+            --plugin=protoc-gen-grpc-gateway=bin/protoc-gen-grpc-gateway \
+			grpc/auth_v1/auth.proto
+
+generation-protoc-access:
+	mkdir -p pkg/access_v1
+	protoc --proto_path grpc/access_v1  --proto_path vendor.protogen \
+            --go_out=pkg/access_v1 --go_opt=paths=source_relative \
+            --plugin=protoc-gen-go=bin/protoc-gen-go \
+            --go-grpc_out=pkg/access_v1 --go-grpc_opt=paths=source_relative \
+            --plugin=protoc-gen-go-grpc=bin/protoc-gen-go-grpc \
+            --validate_out=lang=go:pkg/access_v1 --validate_opt=paths=source_relative \
+            --plugin=protoc-gen-validate=bin/protoc-gen-validate \
+            --grpc-gateway_out=pkg/access_v1 --grpc-gateway_opt=paths=source_relative \
+            --plugin=protoc-gen-grpc-gateway=bin/protoc-gen-grpc-gateway \
+			grpc/access_v1/access.proto
 
 generate-statik:
 	$(LOCAL_BIN)/statik -src=pkg/swagger/ -include='*.css,*.html,*.js,*.json,*.png'
@@ -80,3 +106,25 @@ migrate-down:
 
 migrate-reset:
 	$(LOCAL_BIN)/goose -dir $(LOCAL_MIGRATION_DIR) postgres $(LOCAL_MIGRATION_DSN) reset -v
+
+opensl-cert:
+	openssl genrsa -out tls/ca.key 4096
+	openssl req -new -x509 -key tls/ca.key -sha256 -subj "/C=RU/ST=LO/O=t1p, Inc." -days 365 -out tls/ca.cert
+	openssl genrsa -out tls/service.key 4096
+	openssl req -new -key tls/service.key -out tls/service.csr -config certificate.conf
+	openssl x509 -req -in tls/service.csr -CA tls/ca.cert -CAkey tls/ca.key -CAcreateserial \
+        		-out tls/service.pem -days 365 -sha256 -extfile certificate.conf -extensions req_ext
+
+openssl-secretKey:
+	openssl genrsa -out secrets/access_secret.key 2048
+	openssl genrsa -out secrets/refresh_secret.key 2048
+
+grpc-load-test:
+	ghz \
+		--proto grpc/user_v1/user.proto \
+		--call user_v1.User.Get \
+		--data '{"id": 1}' \
+		--rps 100 \
+		--total 3000 \
+		--insecure \
+		localhost:50051

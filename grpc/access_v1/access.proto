@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package access_v1;
+
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+
+option go_package = "github.com/t1pcrips/auth/pkg/access_v1;access_v1";
+
+service Access {
+  rpc Create(CreateRequest) returns (CreateResponse) {
+    option (google.api.http) = {
+      post: "/access/v1"
+      body: "*"
+    };
+  }
+
+  rpc Check(CheckRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      get: "/access/v1"
+    };
+  }
+}
+
+message CreateRequest {
+  string address = 1;
+  Role role = 2;
+}
+
+message CreateResponse {
+  int64 id = 1;
+}
+
+message CheckRequest {
+  string address = 1;
+}
+
+enum Role {
+  UNKNOWN = 0;
+  ROLE_USER = 1;
+  ROLE_ADMIN = 2;
+}

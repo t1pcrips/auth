@@ -10,6 +10,7 @@ func ToGetUserServiceFromRepo(info *model_user.GetUserResponse) *model.GetUserRe
 		Id:        info.ID,
 		Name:      info.Name,
 		Email:     info.Email,
+		Password:  info.Password,
 		Role:      ToRoleFromString(info.Role),
 		UpdatedAt: info.UpdatedAt,
 		CreatedAt: info.CreatedAt,

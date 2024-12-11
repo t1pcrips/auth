@@ -3,9 +3,9 @@ package user
 import (
 	"context"
 	"github.com/Masterminds/squirrel"
+	"github.com/t1pcrips/auth/internal/errs"
 	"github.com/t1pcrips/auth/internal/model"
 	"github.com/t1pcrips/auth/internal/repository/user/converter_user"
-	"github.com/t1pcrips/auth/pkg/errs"
 	"github.com/t1pcrips/platform-pkg/pkg/database"
 )
 

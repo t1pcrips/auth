@@ -12,9 +12,19 @@ const (
 	postgresDSNExample = "postgres://%s:%s@%s:%d/%s"
 )
 
+type SecretsConfig struct {
+	JWTAccess      string
+	JWTRefresh     string
+	JWTAccessTime  int64
+	JWTRefreshTime int64
+	TimeRedisLive  int64
+}
+
 type GRPCConfig struct {
-	Host string
-	Port string
+	Host     string
+	Port     string
+	Creds    string
+	CredsKey string
 }
 
 type HTTPConfig struct {

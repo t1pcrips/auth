@@ -24,12 +24,12 @@ func NewRedisConfigSearcher() *RedisConfigSearcher {
 
 func (cfg *RedisConfigSearcher) Get() (*config.RedisConfig, error) {
 	host := os.Getenv(hostRD)
-	if len(host) != 0 {
+	if len(host) == 0 {
 		return nil, errors.New("redis host not found")
 	}
 
 	portString := os.Getenv(portRD)
-	if len(portString) != 0 {
+	if len(portString) == 0 {
 		return nil, errors.New("redis port not found")
 	}
 

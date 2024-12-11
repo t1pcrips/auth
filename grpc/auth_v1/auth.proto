@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package auth_v1;
+
+import "google/api/annotations.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/t1pcrips/auth/pkg/auth_v1;auth_v1";
+
+service Auth {
+  rpc Login(LoginRequest) returns (LoginResponse) {
+    option (google.api.http) = {
+      post: "/user/v1/login"
+      body: "*"
+    };
+  }
+
+  rpc RefreshTokens(RefreshTokensRequest) returns (RefreshTokensResponse) {
+    option (google.api.http) = {
+      post: "/user/v1"
+      body: "*"
+    };
+  }
+}
+
+message LoginRequest {
+  string email = 1 [(validate.rules).string.email = true];
+  string password = 2 [(validate.rules).string = {min_len:3, max_len:20}];
+}
+
+message LoginResponse {
+  string refresh_token = 1;
+  string access_token = 2;
+}
+
+message RefreshTokensRequest {
+  string refresh_token = 1;
+}
+
+message RefreshTokensResponse {
+  string refresh_token = 1;
+  string access_token = 2;
+}
+
+
+// refresh token = role + login
+// validate tokens + white list

@@ -2,11 +2,11 @@ package user
 
 import (
 	"github.com/t1pcrips/auth/internal/service"
-	dst "github.com/t1pcrips/auth/pkg/user_v1"
+	"github.com/t1pcrips/auth/pkg/user_v1"
 )
 
 type UserApiImpl struct {
-	dst.UnimplementedUserServer
+	user_v1.UnimplementedUserServer
 	service service.UserService
 }
 

@@ -8,8 +8,8 @@ type UserRole string
 
 const (
 	UNKNOWN UserRole = "UNKNOWN"
-	ADMIN   UserRole = "ADMIN"
-	USER    UserRole = "USER"
+	ADMIN   UserRole = "ROLE_ADMIN"
+	USER    UserRole = "ROLE_USER"
 )
 
 type CreateUserRequest struct {
@@ -23,6 +23,7 @@ type GetUserResponse struct {
 	Id        int64
 	Name      string
 	Email     string
+	Password  string
 	Role      UserRole
 	CreatedAt time.Time
 	UpdatedAt time.Time
